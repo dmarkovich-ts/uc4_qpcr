@@ -369,7 +369,7 @@ def plrn(plate, plrn_df):
         f'Units,copy number,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Run ID,{experiment_eid},{container_name},{plate_name},,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Run Notes,{instrument_protocol},,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
-        f'Run Protocol,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
+        f'Run Protocol,RespProtocol.prcl,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Data File,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'TBD,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Plate Data,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
