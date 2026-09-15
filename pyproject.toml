@@ -8,7 +8,7 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "lupysnb @ file:///Users/DMarkovich/projects/lu/uc4_qpcr/pkgs/LuPySNB-0.44.1.tar.gz",
+    "lupysnb @ file:///Users/DMarkovich/projects/lu/uc4_qpcr/pkgs/LuPySNB-master_0.45.1.zip",
     "pandas (>=3.0.5,<4.0.0)",
     "python-calamine (>=0.8.2,<0.9.0)"
 ]

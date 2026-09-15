@@ -322,7 +322,7 @@ optional = false
 python-versions = ">=3.11"
 groups = ["main"]
 files = [
-    {file = "LuPySNB-0.44.1.tar.gz", hash = "sha256:72cd9ff386e99a58507834980288e4f0aa5260e202a83ed182d99fde61c54abc"},
+    {file = "LuPySNB-master_0.45.1.zip", hash = "sha256:d31c4ef301227c9a05a8d571f1e52635755ff7cc393c5dde2dbdf5ffd98de1d6"},
 ]
 
 [package.dependencies]
@@ -333,7 +333,7 @@ requests = ">=2.34.2"
 
 [package.source]
 type = "file"
-url = "pkgs/LuPySNB-0.44.1.tar.gz"
+url = "pkgs/LuPySNB-master_0.45.1.zip"
 
 [[package]]
 name = "numpy"
@@ -948,4 +948,4 @@ zstd = ["backports-zstd (>=1.0.0) ; python_version < \"3.14\""]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.11"
-content-hash = "f238b2cd9f6fb79222e0cab11e748b1b6d2fdfbfc432187f042a3cea3fc7c16c"
+content-hash = "dc3128e04c803df07042c622069ad89f56488a93d68219fb7c9fea6dfb1a9bb1"

@@ -17,6 +17,7 @@ from LuPySNB.REST import RestClientHTTPX, RestConfig
 def get_client():
     # Get client for connecting to Signals
 
+    # with open('.signals/auth_tst.json') as fp:
     with open('.signals/auth.json') as fp:
         auth = load(fp)
 
@@ -379,17 +380,20 @@ def plrn(plate, plrn_df):
 
 if __name__ == '__main__':
 
-    # Test examples from SNB:EXP-134
+    # Test examples from SNB:EXP-134 in SANDBOX
     # https://lundbeck-sandbox.signalsresearch.revvitycloud.eu/elements/entity/experiment:42c9df43-3da6-466d-82c9-9dc3579de1d1?focus=experiment%3Ab6f190c9-ea2a-4ec2-a0ee-54991ba8609c
 
     # One_Plate_example
-    plate_container_eid = 'plateContainer:ed19a9aa-6ae6-4c93-b170-45bf6755bb75'
+    # plate_container_eid = 'plateContainer:ed19a9aa-6ae6-4c93-b170-45bf6755bb75'
     # Two_Plate_example
     # plate_container_eid = 'plateContainer:e0c0e8c0-d057-49e7-8953-1cc44dca286e'
     # Cell samples plate
     # plate_container_eid = 'plateContainer:fd77e48f-bbb2-4612-a1fb-96f9b50ff52f'
     # Swiss Cheese plate
-    # plate_container_eid = 'plateContainer:0715e4d5-aa28-448e-96e2-28e1d45c0b54'
+    plate_container_eid = 'plateContainer:0715e4d5-aa28-448e-96e2-28e1d45c0b54'
+
+    # Test examples from SNB:EXP-??? in TST
+    # plate_container_eid = 'plateContainer:83abd921-6950-4fc6-9dca-b70f251efa74'
 
     client = get_client()
 
@@ -412,35 +416,35 @@ if __name__ == '__main__':
     # 2. check if individual plates are for Bio-Rad, if yes convert to PLRN
 
     for plate in plates:
-        if 'Instrument Type' in plate['attributes'] and \
-           plate['attributes']['Instrument Type'] == 'Bio Rad / CFX96 / 5 Channel':
-            print(f'>> Performing PLRN conversion for plate {plate["name"]} with rules:')
-            pprint(rules)
+        # if 'Instrument Type' in plate['attributes'] and \
+        #    plate['attributes']['Instrument Type'] == 'Bio Rad / CFX96 / 5 Channel':
+        print(f'>> Performing PLRN conversion for plate {plate["name"]} with rules:')
+        pprint(rules)
 
             # TODO resolving for multiple plates at the same time is
             # much more efficient, as they would likely share many
             # unique assets. The pipelines will not work on a single
             # plate at a time, for implementation compatibility plate
             # objects are passed as single-element lists
-            resolved_unique_assets = resolve_unique_assets([plate],
-                                                           rules['resolve'], client)
-            print(resolved_unique_assets)
+        resolved_unique_assets = resolve_unique_assets([plate],
+                                                       rules['resolve'], client)
+        print(resolved_unique_assets)
 
-            resolve_plates([plate], resolved_unique_assets,
-                           derived_columns_mapping=rules['derived_columns_mapping'])
-            print(' > Resolved plate:')
-            pprint(plate)
+        resolve_plates([plate], resolved_unique_assets,
+                       derived_columns_mapping=rules['derived_columns_mapping'])
+        print(' > Resolved plate:')
+        pprint(plate)
 
-            fname_base = f'data/forward/experiment__{plate["experiment"]["name"]}__'\
-                f'plate_container__{plate["plate_container"]["name"]}__'\
-                f'plate__{plate["name"]}__resolved'
-            plate['data'].to_csv(path_or_buf=f'{fname_base}.csv',
-                                 index=False, quoting=QUOTE_NONNUMERIC)
+        fname_base = f'data/forward/experiment__{plate["experiment"]["name"]}__'\
+            f'plate_container__{plate["plate_container"]["name"]}__'\
+            f'plate__{plate["name"]}__resolved'
+        plate['data'].to_csv(path_or_buf=f'{fname_base}.csv',
+                             index=False, quoting=QUOTE_NONNUMERIC)
 
-            plrn_df = get_plrn_df(plate['data'],
-                                  rules['derived_columns_mapping'])
-            print(' > Resolved PLRN:')
-            print(plrn_df)
+        plrn_df = get_plrn_df(plate['data'],
+                              rules['derived_columns_mapping'])
+        print(' > Resolved PLRN:')
+        print(plrn_df)
 
-            with open(f'{fname_base}.plrn', 'w') as fl:
-                fl.write(plrn(plate, plrn_df))
+        with open(f'{fname_base}.plrn', 'w') as fl:
+            fl.write(plrn(plate, plrn_df))
