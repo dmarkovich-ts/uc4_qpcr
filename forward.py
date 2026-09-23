@@ -300,6 +300,18 @@ def resolve_plates(plates, resolved_unique_assets, derived_columns_mapping):
 
         full = merge(left=full, right=repl_df, how='left', on=repl_clmns)
         full.Replicate = full.Replicate.astype('Int64')
+
+        # Enumerate Replicate in order of appearance (as 1-based
+        # index), so that replicate group 1 is the group in first well
+        # A1, etc:
+        repl_new = []
+        for k, v in enumerate(full.Replicate.dropna().unique()):
+            repl_new.append({'Replicate_index': 1 + k, 'Replicate': v})
+        repl_new = DataFrame.from_records(repl_new)
+
+        full = merge(left=full, right=repl_new, how='left', on='Replicate')
+        full.Replicate_index = full.Replicate_index.astype('Int64')
+
         # full.head()
         # full.info()
 
@@ -340,7 +352,7 @@ def get_plrn_df(df, mpng):
     plrn_df['FRET Target Name'] = None
 
     plrn_df['Biological Set Name'] = df[mpng['Sample']]
-    plrn_df['Replicate'] = df['Replicate']
+    plrn_df['Replicate'] = df['Replicate_index']
 
     for i in range(1, 6, 1):
         plrn_df[f'Ch{i} Quantity'] = None
@@ -360,17 +372,19 @@ def plrn(plate, plrn_df):
     plate_name = plate['name']
     instrument_protocol = plate['attributes']['Instrument Protocol'] \
         if 'Instrument Protocol' in plate['attributes'] else ''
+    plate_size = plate['attributes']['n_rows'] * \
+        plate['attributes']['n_columns']
     return (
         f'Plate Header,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Filed,Data,,Instruction,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Version,1,,Do not modify this field.,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
-        f'Plate Size,96,,Do not modify this field.,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
+        f'Plate Size,{plate_size},,Do not modify this field.,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Plate Type,BR Clear,,Allowed values (BR White,BR Clear),,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Scan Mode,All Channels,,"Allowed values (""SYBR/FAM Only"""," ""All Channels"""," ""FRET"")",,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Units,copy number,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Run ID,{experiment_eid},{container_name},{plate_name},,,,,,,,,,,,,,,,,,,,,,,,,,\n'
-        f'Run Notes,{instrument_protocol},,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
-        f'Run Protocol,RespProtocol.prcl,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
+        f'Run Notes,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
+        f'Run Protocol,RespProtocol.prcl,{instrument_protocol},,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Data File,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'TBD,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Plate Data,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
