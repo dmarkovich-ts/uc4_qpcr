@@ -1,7 +1,7 @@
 # import asyncio
 
 from csv import QUOTE_NONNUMERIC
-from json import dump, load
+from json import dump, dumps, load
 from numpy import concatenate, unique
 from math import log10
 from pandas import DataFrame, merge, notna
@@ -367,24 +367,33 @@ def get_plrn_df(df, mpng):
 
 
 def plrn(plate, plrn_df):
-    experiment_eid = plate['experiment']['eid']
-    container_name = plate['plate_container']['name']
-    plate_name = plate['name']
+    # experiment_eid = plate['experiment']['eid']
+    experiment_name = plate['experiment']['name']
+    # container_name = plate['plate_container']['name']
+    # plate_name = plate['name']
     instrument_protocol = plate['attributes']['Instrument Protocol'] \
         if 'Instrument Protocol' in plate['attributes'] else ''
     plate_size = plate['attributes']['n_rows'] * \
         plate['attributes']['n_columns']
+    run_notes = '||'.join([
+        f'experiment_eid__{plate["experiment"]["eid"]}',
+        f'experiment_name__{experiment_name}',
+        f'plate_container_name__{plate["plate_container"]["name"]}',
+        f'plate_name__{plate["name"]}',
+        f'instrument_protocol__{instrument_protocol}'
+    ])
+
     return (
         f'Plate Header,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Filed,Data,,Instruction,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Version,1,,Do not modify this field.,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Plate Size,{plate_size},,Do not modify this field.,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
-        f'Plate Type,BR Clear,,Allowed values (BR White,BR Clear),,,,,,,,,,,,,,,,,,,,,,,,,\n'
+        f'Plate Type,BR White,,Allowed values (BR White,BR Clear),,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Scan Mode,All Channels,,"Allowed values (""SYBR/FAM Only"""," ""All Channels"""," ""FRET"")",,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Units,copy number,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
-        f'Run ID,{experiment_eid},{container_name},{plate_name},,,,,,,,,,,,,,,,,,,,,,,,,,\n'
-        f'Run Notes,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
-        f'Run Protocol,RespProtocol.prcl,{instrument_protocol},,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
+        f'Run ID,{experiment_name},,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
+        f'Run Notes,"{run_notes}",,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
+        f'Run Protocol,RespProtocol.prcl,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Data File,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'TBD,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
         f'Plate Data,,,,,,,,,,,,,,,,,,,,,,,,,,,,,\n'
@@ -402,9 +411,9 @@ if __name__ == '__main__':
     # Two_Plate_example
     # plate_container_eid = 'plateContainer:e0c0e8c0-d057-49e7-8953-1cc44dca286e'
     # Cell samples plate
-    # plate_container_eid = 'plateContainer:fd77e48f-bbb2-4612-a1fb-96f9b50ff52f'
+    plate_container_eid = 'plateContainer:fd77e48f-bbb2-4612-a1fb-96f9b50ff52f'
     # Swiss Cheese plate
-    plate_container_eid = 'plateContainer:0715e4d5-aa28-448e-96e2-28e1d45c0b54'
+    # plate_container_eid = 'plateContainer:0715e4d5-aa28-448e-96e2-28e1d45c0b54'
 
     # Test examples from SNB:EXP-??? in TST
     # plate_container_eid = 'plateContainer:83abd921-6950-4fc6-9dca-b70f251efa74'
